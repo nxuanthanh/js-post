@@ -163,8 +163,20 @@
         <div class="container">
           <h1 class="with-underline text-center">Latest posts</h1>
 
+          <div class="input-group flex-nowrap mb-3">
+            <span class="input-group-text" id="addon-wrapping">Search</span>
+            <input
+              id="inputSearch"
+              type="text"
+              class="form-control"
+              placeholder="Search..."
+              aria-label="search"
+              aria-describedby="addon-wrapping"
+            />
+          </div>
+
           <!-- Posts list -->
-          <ul id="postList" class="row posts-list justify-content-center">
+          <ul id="postList" class="row posts-list justify-content-center ps-0">
             <!-- <li class="col-12 col-md-6 col-lg-4">
               <div class="post-item mb-4">
                 <div class="card">
