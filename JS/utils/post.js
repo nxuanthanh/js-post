@@ -49,5 +49,12 @@ export function renderPostList(elementId, postList) {
     if (!liElement) return;
 
     ulElement.appendChild(liElement);
+
+    const divElement = liElement.firstElementChild;
+    if (!divElement) return;
+
+    divElement.addEventListener('click', () => {
+      window.location.assign(`/postDetail.html?id=${post.id}`);
+    });
   });
 }
