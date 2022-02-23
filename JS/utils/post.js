@@ -31,8 +31,6 @@ export function createPostItem(post) {
     });
   }
 
-  // attach events
-
   return postItem;
 }
 
@@ -53,8 +51,18 @@ export function renderPostList(elementId, postList) {
     const divElement = liElement.firstElementChild;
     if (!divElement) return;
 
-    divElement.addEventListener('click', () => {
+    divElement.addEventListener('click', (e) => {
+      const menu = liElement.querySelector('[data-id="menu"]');
+      if (menu && menu.contains(e.target)) return;
+
       window.location.assign(`/postDetail.html?id=${post.id}`);
     });
+
+    const editButton = liElement.querySelector('[data-id="edit"]');
+    if (editButton) {
+      editButton.addEventListener('click', (e) => {
+        window.location.assign(`/addEditPost.html?id=${post.id}`);
+      });
+    }
   });
 }
