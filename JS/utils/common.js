@@ -24,3 +24,10 @@ export function truncateText(text, maxLength) {
 
   return `${text.slice(0, maxLength - 1)}…`;
 }
+
+export function randomNumber(n) {
+  if (n <= 0) return -1;
+
+  const random = Math.round(Math.random() * n);
+  return random;
+}

@@ -1,11 +1,12 @@
 import postApi from './api/postAPI';
-import { initPagination, renderPostList, initSearch, renderPagination } from './utils';
+import { initPagination, renderPostList, initSearch, renderPagination, toast } from './utils';
 
 async function handleFilterChange(filterName, filterValue) {
   try {
     // update query params
     const url = new URL(window.location);
-    url.searchParams.set(filterName, filterValue);
+
+    if (filterName) url.searchParams.set(filterName, filterValue);
 
     // reset page if needed
     if (filterName === 'title_like') url.searchParams.set('_page', 1);
@@ -22,6 +23,41 @@ async function handleFilterChange(filterName, filterValue) {
   }
 }
 
+function registerPostDeleteEvent() {
+  document.addEventListener('post-delete', async (event) => {
+    try {
+      var confirmModal = new window.bootstrap.Modal(document.getElementById('confirm'));
+      confirmModal.show();
+
+      // const yesConfirm = document.querySelector('[data-id="confirmYes"]');
+      // const noConfirm = document.querySelector('[data-id="confirmNo"]');
+      const post = event.detail;
+      const message = 'Are you sure you want to delete';
+      if (window.confirm(message)) {
+        await postApi.remove(post.id);
+        await handleFilterChange();
+
+        toast.success('Remove post successfully');
+      }
+
+      // yesConfirm.addEventListener('click', async () => {
+      //   await postApi.remove(post.id);
+      //   await handleFilterChange();
+
+      //   confirmModal.hide();
+      //   toast.success('Remove post successfully');
+      // });
+
+      // noConfirm.addEventListener('click', () => {
+      //   confirmModal.hide();
+      // });
+    } catch (error) {
+      console.log('failed to fetch post list', error);
+      toast.error(error.message);
+    }
+  });
+}
+
 (async () => {
   try {
     // set default pagination {_page, _limit} on URL
@@ -36,6 +72,8 @@ async function handleFilterChange(filterName, filterValue) {
     // render postlist based URL params
     const queryParams = url.searchParams;
 
+    registerPostDeleteEvent();
+
     // attach click event for links
     initPagination({
       elementId: 'pagination',
@@ -48,10 +86,12 @@ async function handleFilterChange(filterName, filterValue) {
       onChange: (value) => handleFilterChange('title_like', value),
     });
 
-    const { data, pagination } = await postApi.getALL(queryParams);
+    // const { data, pagination } = await postApi.getALL(queryParams);
 
-    renderPostList('postList', data);
-    renderPagination('pagination', pagination);
+    // renderPostList('postList', data);
+    // renderPagination('pagination', pagination);
+
+    handleFilterChange();
   } catch (error) {
     console.log('get all failed', error);
   }

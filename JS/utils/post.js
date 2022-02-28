@@ -64,5 +64,16 @@ export function renderPostList(elementId, postList) {
         window.location.assign(`/addEditPost.html?id=${post.id}`);
       });
     }
+
+    const removeBtn = liElement.querySelector('[data-id="remove"]');
+    if (removeBtn) {
+      removeBtn.addEventListener('click', () => {
+        const customEvent = new CustomEvent('post-delete', {
+          bubbles: true,
+          detail: post,
+        });
+        removeBtn.dispatchEvent(customEvent);
+      });
+    }
   });
 }

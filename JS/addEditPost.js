@@ -1,17 +1,46 @@
 import postApi from './api/postAPI';
-import { initPostForm, toast } from './utils';
+import { IMAGE_SOURCE, initPostForm, toast } from './utils';
+
+function removeUnusedField(formValues) {
+  const payload = { ...formValues };
+
+  if (payload.imageSource === IMAGE_SOURCE.PICSUM) {
+    delete payload.image;
+  } else {
+    delete payload.imageUrl;
+  }
+
+  delete payload.imageSource;
+
+  if (!payload.id) delete payload.id;
+
+  return payload;
+}
+
+function jsonToFormData(jsonObject) {
+  const formData = new FormData();
+
+  for (const key in jsonObject) {
+    formData.set(key, jsonObject[key]);
+  }
+
+  return formData;
+}
 
 async function handlePostFormSubmit(formValues) {
   try {
+    const payload = removeUnusedField(formValues);
+    const formData = jsonToFormData(payload);
+
     const savePost = formValues.id
-      ? await postApi.update(formValues)
-      : await postApi.add(formValues);
+      ? await postApi.updateFormData(formData)
+      : await postApi.addFormData(formData);
 
     toast.success('Save post successfully');
 
-    setTimeout(() => {}, 3000);
-
-    window.location.assign(`/postDetail.html?id=${savePost.id}`);
+    setTimeout(() => {
+      window.location.assign(`/postDetail.html?id=${savePost.id}`);
+    }, 2000);
   } catch (error) {
     console.log('failed to save post', error);
     toast.error(`Error: ${error.message}`);
